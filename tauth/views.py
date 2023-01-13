@@ -9,6 +9,8 @@ from django.views.decorators.cache import never_cache
 from authlib.google import GoogleOAuth2Client
 from authlib.views import retrieve_next, set_next_cookie
 
+from tauth.utils import validate_user_access
+
 
 ADMIN_OAUTH_PATTERNS = settings.ADMIN_OAUTH_PATTERNS
 ADMIN_OAUTH_LOGIN_HINT = "admin-oauth-login-hint"
@@ -41,7 +43,13 @@ def admin_oauth(request):
                 User = auth.get_user_model()
                 user = User.objects.filter(email=user_mail).first()
                 if user is None:
-                    User.objects.create(email=user_mail, username=user_mail, is_superuser=True, is_staff=True, is_active=False)
+                    User.objects.create(email=user_mail, username=user_mail, is_superuser=True, is_staff=True, is_active=True)
+
+                if not validate_user_access(user_mail):
+                    messages.error(request, _("You don't have access to view this page."))
+                    response = redirect("admin:login")
+                    response.delete_cookie(ADMIN_OAUTH_LOGIN_HINT)
+                    return response
 
                 user = auth.authenticate(email=user_mail)
                 if user and user.is_staff:
