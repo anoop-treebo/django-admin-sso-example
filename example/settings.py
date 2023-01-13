@@ -143,3 +143,5 @@ ADMIN_OAUTH_PATTERNS = [
 ]
 GOOGLE_CLIENT_ID = '433449472527-9caca2uoa4g6qadtpgisf7ub1t2hh3lp.apps.googleusercontent.com'
 GOOGLE_CLIENT_SECRET = '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'
+APP_NAME = 'Example'
+ADMIN_AUTH_API_URL = 'http://127.0.0.1:9000'
